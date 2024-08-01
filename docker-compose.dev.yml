@@ -1,8 +1,5 @@
 services:
-    app:
-        image: hello-app
     server:
-        image: express-docker
         build: ./server
         ports:
             - 5050:5000
@@ -14,10 +11,18 @@ services:
         volumes:
             - ./data:/data/db
     client:
-        image: client
         build: ./client
         ports:
-            - 8080:8080
+            - 8080:3000
         command: npm start
         volumes:
             - ./client/src/:/app/src/
+        # hot reload
+        environment:
+            # le serveur doit se connecter sur localhost
+            - WDS_SOCKET=localhost
+            # active la lib chokidar pour surveiller les changements
+            - CHOKIDAR_USEPOLLING=true
+            # active également la surveillance de changements pour watchpack
+            - WATCHPACK_POLLING=true
+            # "polling" = pollinisation
